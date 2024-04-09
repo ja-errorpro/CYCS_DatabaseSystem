@@ -5,6 +5,9 @@ DataFrames = {} # To store the dataframes(Tables)
 last_is_error = False # To check if the last operation was successful or not
 
 def AddTable():
+    """
+    Add a table to the database
+    """
     global last_is_error
     table_name = input("\nEnter the name of the table: ")
     try:
@@ -74,6 +77,9 @@ def transform_value(value: str):
     return value
 
 def SelectRows():
+    """
+    Select rows from a table based on a condition
+    """
     table_name = input("\nEnter the name of the table: ")
     value_or_column1 = input("\nEnter the value or column name: ")
     value_or_column1 = transform_value(value_or_column1)
@@ -294,7 +300,7 @@ def UnionTables():
     table2 = input("\nEnter the name of the second table: ")
     result = None
     try:
-        result = pandas.concat([DataFrames[table1], DataFrames[table2]])
+        result = pandas.concat([DataFrames[table1], DataFrames[table2]]).drop_duplicates()
         save = input("\nDo you want to save the result? (y/n): ")
         print(result.to_string(index = False))
         if save.lower() == "y":
@@ -357,8 +363,8 @@ def IntersectTables():
     result = None
     try:
         
-        result = pandas.merge(DataFrames[table1], DataFrames[table2], how = "inner")
-
+        result = pandas.concat([DataFrames[table1], DataFrames[table2]]).drop_duplicates(keep = False)
+        result = DataFrames[table1][~DataFrames[table1].apply(tuple, 1).isin(result.apply(tuple, 1))]
         save = input("\nDo you want to save the result? (y/n): ")
         print(result.to_string(index = False))
         if save.lower() == "y":
@@ -366,7 +372,7 @@ def IntersectTables():
             DataFrames[new_table] = result
             print("\nResult stored in " + new_table)
         last_is_error = False
-    except:
+    except KeyError:
         last_is_error = True
         print("\033[1;31mError:\033[0m Table not found")
 
@@ -420,20 +426,20 @@ def DivideTables():
 
 
 def WriteMenu():
-    colors = ["\033[31m", 
-              "\033[32m", 
-              "\033[33m", 
-              "\033[34m", 
-              "\033[35m", 
-              "\033[36m", 
-              "\033[37m",
-              "\033[1;31m",
-              "\033[1;32m",
-              "\033[1;33m",
-              "\033[1;34m",
-              "\033[1;35m",
-              "\033[1;36m",
-              "\033[1;37m"  
+    colors = ["\033[31m", # Red
+              "\033[32m",  # Green
+              "\033[33m",  # Yellow
+              "\033[34m", # Blue
+              "\033[35m", # Purple
+              "\033[36m", # Cyan
+              "\033[37m", # White
+              "\033[1;31m", # Bold Red
+              "\033[1;32m", # Bold Green
+              "\033[1;33m", # Bold Yellow
+              "\033[1;34m", # Bold Blue
+              "\033[1;35m", # Bold Purple
+              "\033[1;36m", # Bold Cyan
+              "\033[1;37m" # Bold White
             ]
     menu = [
             "help - Show This Menu",
